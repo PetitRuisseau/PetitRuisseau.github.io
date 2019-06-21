@@ -37,12 +37,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _module_pokemonList_pokemon_list_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./module/pokemonList/pokemon-list.component */ "./src/app/module/pokemonList/pokemon-list.component.ts");
+/* harmony import */ var _module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./module */ "./src/app/module/index.ts");
+
 
 
 
 
 var routes = [
-    { path: '', pathMatch: 'full', component: _module_pokemonList_pokemon_list_component__WEBPACK_IMPORTED_MODULE_3__["PokemonListComponent"] },
+    { path: 'pokemon-list', pathMatch: 'full', component: _module_pokemonList_pokemon_list_component__WEBPACK_IMPORTED_MODULE_3__["PokemonListComponent"] },
+    { path: 'inventory', pathMatch: 'full', component: _module__WEBPACK_IMPORTED_MODULE_4__["InventoryComponent"] },
+    { path: '**', pathMatch: 'full', redirectTo: 'pokemon-list' },
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -144,6 +148,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/button */ "./node_modules/@angular/material/esm5/button.es5.js");
 /* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/material/dialog */ "./node_modules/@angular/material/esm5/dialog.es5.js");
 /* harmony import */ var _shared_component_loading_loading_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./shared/component/loading/loading.component */ "./src/app/shared/component/loading/loading.component.ts");
+/* harmony import */ var _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/cdk/drag-drop */ "./node_modules/@angular/cdk/esm5/drag-drop.es5.js");
+
 
 
 
@@ -180,6 +186,7 @@ var AppModule = /** @class */ (function () {
                 _module__WEBPACK_IMPORTED_MODULE_6__["FooterComponent"],
                 _module__WEBPACK_IMPORTED_MODULE_6__["HeaderComponent"],
                 _shared_component_loading_loading_component__WEBPACK_IMPORTED_MODULE_19__["LoadingComponent"],
+                _module__WEBPACK_IMPORTED_MODULE_6__["InventoryComponent"],
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -195,6 +202,7 @@ var AppModule = /** @class */ (function () {
                 _angular_material_icon__WEBPACK_IMPORTED_MODULE_16__["MatIconModule"],
                 _angular_material_button__WEBPACK_IMPORTED_MODULE_17__["MatButtonModule"],
                 _angular_material_dialog__WEBPACK_IMPORTED_MODULE_18__["MatDialogModule"],
+                _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_20__["DragDropModule"],
             ],
             providers: [
                 _core_services__WEBPACK_IMPORTED_MODULE_5__["PokeapiService"],
@@ -203,6 +211,7 @@ var AppModule = /** @class */ (function () {
                 _core_services__WEBPACK_IMPORTED_MODULE_5__["GenerationsService"],
                 _core_services__WEBPACK_IMPORTED_MODULE_5__["TypesService"],
                 _core_services__WEBPACK_IMPORTED_MODULE_5__["ColorsService"],
+                _core_services__WEBPACK_IMPORTED_MODULE_5__["InventoryService"],
             ],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
         })
@@ -435,7 +444,7 @@ var GenerationsService = /** @class */ (function () {
 /*!****************************************!*\
   !*** ./src/app/core/services/index.ts ***!
   \****************************************/
-/*! exports provided: PokeapiService, PokemonService, AbilitiesService, GenerationsService, TypesService, ColorsService */
+/*! exports provided: PokeapiService, PokemonService, AbilitiesService, GenerationsService, TypesService, ColorsService, InventoryService */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -458,11 +467,66 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _colors_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./colors.service */ "./src/app/core/services/colors.service.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColorsService", function() { return _colors_service__WEBPACK_IMPORTED_MODULE_5__["ColorsService"]; });
 
+/* harmony import */ var _inventory_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./inventory.service */ "./src/app/core/services/inventory.service.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InventoryService", function() { return _inventory_service__WEBPACK_IMPORTED_MODULE_6__["InventoryService"]; });
 
 
 
 
 
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/app/core/services/inventory.service.ts":
+/*!****************************************************!*\
+  !*** ./src/app/core/services/inventory.service.ts ***!
+  \****************************************************/
+/*! exports provided: InventoryService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InventoryService", function() { return InventoryService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+
+
+var InventoryService = /** @class */ (function () {
+    function InventoryService() {
+        this.inventorySaveKey = 'inventory-save';
+        this.teamSaveKey = 'team-save';
+    }
+    InventoryService.prototype.savePokemon = function (id) {
+        var list = [];
+        if (window.localStorage.getItem(this.inventorySaveKey)) {
+            list = JSON.parse(window.localStorage.getItem(this.inventorySaveKey));
+        }
+        list.push(id);
+        window.localStorage.setItem(this.inventorySaveKey, JSON.stringify(list));
+    };
+    InventoryService.prototype.getInventoryList = function () {
+        return JSON.parse(window.localStorage.getItem(this.inventorySaveKey)) || [];
+    };
+    InventoryService.prototype.getTeam = function () {
+        return JSON.parse(window.localStorage.getItem(this.teamSaveKey))
+            || { slot1: [], slot2: [], slot3: [], slot4: [], slot5: [], slot6: [] };
+    };
+    InventoryService.prototype.saveInventoryList = function (inventory) {
+        window.localStorage.setItem(this.inventorySaveKey, JSON.stringify(inventory));
+    };
+    InventoryService.prototype.saveTeam = function (team) {
+        window.localStorage.setItem(this.teamSaveKey, JSON.stringify(team));
+    };
+    InventoryService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+    ], InventoryService);
+    return InventoryService;
+}());
 
 
 
@@ -737,7 +801,7 @@ var FooterComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header></header>"
+module.exports = "<header>\r\n    <a [routerLink]=\"['inventory']\" routerLinkActive=\"display-none\"  mat-mini-fab>\r\n        <img src=\"assets/img/backpackpng.png\" alt=\"inventory\" aria-hidden=\"false\">\r\n    </a>\r\n    <a [routerLink]=\"['pokemon-list']\" routerLinkActive=\"display-none\" mat-mini-fab>\r\n        <mat-icon aria-hidden=\"false\" aria-label=\"list\">list</mat-icon>\r\n    </a>\r\n</header>"
 
 /***/ }),
 
@@ -748,7 +812,7 @@ module.exports = "<header></header>"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL21vZHVsZS9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIn0= */"
+module.exports = "header {\n  position: fixed;\n  right: 20px;\n  top: 20px;\n  z-index: 3; }\n  header a {\n    width: 56px;\n    height: 55px;\n    padding-right: 2px; }\n  header img {\n    width: 40px;\n    height: 40px; }\n  header mat-icon {\n    font-size: 2em;\n    line-height: 39px; }\n  .display-none {\n  display: none; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL2hlYWRlci9DOlxcVXNlcnNcXGNsYWZmb250XFxEb3dubG9hZHNcXFBlcnNvXFxwb2tlZGl4ZWVkL3NyY1xcYXBwXFxtb2R1bGVcXGhlYWRlclxcaGVhZGVyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksZUFBZTtFQUNmLFdBQVc7RUFDWCxTQUFTO0VBQ1QsVUFBVSxFQUFBO0VBSmQ7SUFNUSxXQUFXO0lBQ1gsWUFBWTtJQUNaLGtCQUFrQixFQUFBO0VBUjFCO0lBV1EsV0FBVztJQUNYLFlBQVksRUFBQTtFQVpwQjtJQWVRLGNBQWM7SUFDZCxpQkFBaUIsRUFBQTtFQUl6QjtFQUNJLGFBQWEsRUFBQSIsImZpbGUiOiJzcmMvYXBwL21vZHVsZS9oZWFkZXIvaGVhZGVyLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiaGVhZGVyIHtcclxuICAgIHBvc2l0aW9uOiBmaXhlZDtcclxuICAgIHJpZ2h0OiAyMHB4O1xyXG4gICAgdG9wOiAyMHB4O1xyXG4gICAgei1pbmRleDogMztcclxuICAgIGEge1xyXG4gICAgICAgIHdpZHRoOiA1NnB4O1xyXG4gICAgICAgIGhlaWdodDogNTVweDtcclxuICAgICAgICBwYWRkaW5nLXJpZ2h0OiAycHg7XHJcbiAgICB9XHJcbiAgICBpbWcge1xyXG4gICAgICAgIHdpZHRoOiA0MHB4O1xyXG4gICAgICAgIGhlaWdodDogNDBweDtcclxuICAgIH1cclxuICAgIG1hdC1pY29uIHtcclxuICAgICAgICBmb250LXNpemU6IDJlbTtcclxuICAgICAgICBsaW5lLWhlaWdodDogMzlweDtcclxuICAgIH1cclxufVxyXG5cclxuLmRpc3BsYXktbm9uZSB7XHJcbiAgICBkaXNwbGF5OiBub25lO1xyXG59Il19 */"
 
 /***/ }),
 
@@ -787,7 +851,7 @@ var HeaderComponent = /** @class */ (function () {
 /*!*********************************!*\
   !*** ./src/app/module/index.ts ***!
   \*********************************/
-/*! exports provided: PokemonListComponent, PokemonDetailsDialog, HeaderComponent, FooterComponent */
+/*! exports provided: PokemonListComponent, PokemonDetailsDialog, HeaderComponent, FooterComponent, InventoryComponent */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -804,9 +868,103 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _footer_footer_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./footer/footer.component */ "./src/app/module/footer/footer.component.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FooterComponent", function() { return _footer_footer_component__WEBPACK_IMPORTED_MODULE_3__["FooterComponent"]; });
 
+/* harmony import */ var _inventory_inventory_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inventory/inventory.component */ "./src/app/module/inventory/inventory.component.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InventoryComponent", function() { return _inventory_inventory_component__WEBPACK_IMPORTED_MODULE_4__["InventoryComponent"]; });
 
 
 
+
+
+
+
+
+/***/ }),
+
+/***/ "./src/app/module/inventory/inventory.component.html":
+/*!***********************************************************!*\
+  !*** ./src/app/module/inventory/inventory.component.html ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<section class=\"team\">\r\n    <div\r\n        cdkDropList \r\n        id=\"slot1\"\r\n        [cdkDropListData]=\"team.slot1\" \r\n        [cdkDropListConnectedTo]=\"[inventory,'slot2','slot3','slot4','slot5','slot6']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot1\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n    <div\r\n        cdkDropList \r\n        id=\"slot2\"\r\n        [cdkDropListData]=\"team.slot2\" \r\n        [cdkDropListConnectedTo]=\"[inventory, 'slot1','slot3','slot4','slot5','slot6']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot2\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n    <div\r\n        cdkDropList \r\n        id=\"slot3\"\r\n        [cdkDropListData]=\"team.slot3\" \r\n        [cdkDropListConnectedTo]=\"[inventory, 'slot1','slot2','slot4','slot5','slot6']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot3\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n    <div\r\n        cdkDropList \r\n        id=\"slot4\"\r\n        [cdkDropListData]=\"team.slot4\" \r\n        [cdkDropListConnectedTo]=\"[inventory, 'slot1','slot2','slot3','slot5','slot6']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot4\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n    <div\r\n        cdkDropList \r\n        id=\"slot5\"\r\n        [cdkDropListData]=\"team.slot5\" \r\n        [cdkDropListConnectedTo]=\"[inventory, 'slot1','slot2','slot3','slot4','slot6']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot5\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n    <div\r\n        cdkDropList \r\n        id=\"slot6\"\r\n        [cdkDropListData]=\"team.slot6\" \r\n        [cdkDropListConnectedTo]=\"[inventory, 'slot1','slot2','slot3','slot4','slot5']\" \r\n        (cdkDropListDropped)=\"drop($event)\"\r\n        class=\"team-slot\" >\r\n        <button mat-raised-button cdkDrag *ngFor=\"let pokemon of team.slot6\" class=\"pokemon\">\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n        </button>\r\n    </div>\r\n</section>\r\n<section \r\n    #inventory=\"cdkDropList\"\r\n    cdkDropListSortingDisabled \r\n    cdkDropListOrientation=\"horizontal\" \r\n    cdkDropList (cdkDropListDropped)=\"drop($event)\" \r\n    [cdkDropListData]=\"inventoryList\"\r\n    [cdkDropListConnectedTo]=\"['slot1','slot2','slot3','slot4','slot5','slot6']\" \r\n    class=\"inventory-list\">\r\n    <button mat-raised-button cdkDrag *ngFor=\"let pokemon of inventoryList\" class=\"pokemon\">\r\n        <img [src]=\"getPokemonSpriteUrl(pokemon)\" [alt]=\"pokemon\" aria-hidden=\"true\">\r\n    </button>\r\n</section>"
+
+/***/ }),
+
+/***/ "./src/app/module/inventory/inventory.component.scss":
+/*!***********************************************************!*\
+  !*** ./src/app/module/inventory/inventory.component.scss ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".team {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  max-width: 420px;\n  background: #ff4081;\n  margin: 20px auto;\n  padding: 5px;\n  align-items: center;\n  justify-content: center;\n  border-radius: 4px; }\n  .team .team-slot {\n    overflow: hidden;\n    margin: 5px;\n    width: 130px;\n    height: 130px;\n    background: rgba(255, 255, 255, 0.3);\n    border-radius: 4px; }\n  .inventory-list {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: center; }\n  .pokemon {\n  width: 120px;\n  height: 120px;\n  padding: 20px 10px;\n  border: solid 1px #ccc;\n  color: rgba(0, 0, 0, 0.87);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n  cursor: move;\n  background: white;\n  font-size: 14px;\n  margin: 5px; }\n  .cdk-drag-preview {\n  box-sizing: border-box;\n  border-radius: 4px;\n  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12); }\n  .cdk-drag-placeholder {\n  opacity: 0; }\n  .cdk-drag-animating {\n  transition: -webkit-transform 250ms cubic-bezier(0, 0, 0.2, 1);\n  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);\n  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1), -webkit-transform 250ms cubic-bezier(0, 0, 0.2, 1); }\n  .inventory-list.cdk-drop-list-dragging .pokemon:not(.cdk-drag-placeholder) {\n  transition: -webkit-transform 250ms cubic-bezier(0, 0, 0.2, 1);\n  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);\n  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1), -webkit-transform 250ms cubic-bezier(0, 0, 0.2, 1); }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL2ludmVudG9yeS9DOlxcVXNlcnNcXGNsYWZmb250XFxEb3dubG9hZHNcXFBlcnNvXFxwb2tlZGl4ZWVkL3NyY1xcYXBwXFxtb2R1bGVcXGludmVudG9yeVxcaW52ZW50b3J5LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixlQUFlO0VBQ2YsZ0JBQWdCO0VBQ2hCLG1CQUFtQjtFQUNuQixpQkFBaUI7RUFDakIsWUFBWTtFQUNaLG1CQUFtQjtFQUNuQix1QkFBdUI7RUFDdkIsa0JBQWtCLEVBQUE7RUFWdEI7SUFhUSxnQkFBZ0I7SUFDaEIsV0FBVztJQUNYLFlBQVk7SUFDWixhQUFhO0lBQ2Isb0NBQTZCO0lBQzdCLGtCQUFrQixFQUFBO0VBSTFCO0VBQ0ksYUFBYTtFQUNiLG1CQUFtQjtFQUNuQixlQUFlO0VBQ2YsbUJBQW1CO0VBQ25CLHVCQUF1QixFQUFBO0VBRzNCO0VBQ0ksWUFBWTtFQUNaLGFBQWE7RUFDYixrQkFBa0I7RUFDbEIsc0JBQXNCO0VBQ3RCLDBCQUEwQjtFQUMxQixhQUFhO0VBQ2IsbUJBQW1CO0VBQ25CLHVCQUF1QjtFQUN2QixzQkFBc0I7RUFDdEIsWUFBWTtFQUNaLGlCQUFpQjtFQUNqQixlQUFlO0VBQ2YsV0FBVyxFQUFBO0VBR2Y7RUFDSSxzQkFBc0I7RUFDdEIsa0JBQWtCO0VBQ2xCLHFIQUU4QyxFQUFBO0VBR2xEO0VBQ0ksVUFBVSxFQUFBO0VBR2Q7RUFDSSw4REFBc0Q7RUFBdEQsc0RBQXNEO0VBQXRELDBHQUFzRCxFQUFBO0VBRzFEO0VBQ0ksOERBQXNEO0VBQXRELHNEQUFzRDtFQUF0RCwwR0FBc0QsRUFBQSIsImZpbGUiOiJzcmMvYXBwL21vZHVsZS9pbnZlbnRvcnkvaW52ZW50b3J5LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnRlYW0ge1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtZGlyZWN0aW9uOiByb3c7XHJcbiAgICBmbGV4LXdyYXA6IHdyYXA7XHJcbiAgICBtYXgtd2lkdGg6IDQyMHB4O1xyXG4gICAgYmFja2dyb3VuZDogI2ZmNDA4MTtcclxuICAgIG1hcmdpbjogMjBweCBhdXRvO1xyXG4gICAgcGFkZGluZzogNXB4O1xyXG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xyXG4gICAgYm9yZGVyLXJhZGl1czogNHB4O1xyXG5cclxuICAgIC50ZWFtLXNsb3Qge1xyXG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47XHJcbiAgICAgICAgbWFyZ2luOiA1cHg7XHJcbiAgICAgICAgd2lkdGg6IDEzMHB4O1xyXG4gICAgICAgIGhlaWdodDogMTMwcHg7XHJcbiAgICAgICAgYmFja2dyb3VuZDogcmdiYSgkY29sb3I6ICNmZmYsICRhbHBoYTogMC4zKTtcclxuICAgICAgICBib3JkZXItcmFkaXVzOiA0cHg7XHJcbiAgICB9XHJcbn1cclxuXHJcbi5pbnZlbnRvcnktbGlzdCB7XHJcbiAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgZmxleC1kaXJlY3Rpb246IHJvdztcclxuICAgIGZsZXgtd3JhcDogd3JhcDtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxufVxyXG4gIFxyXG4ucG9rZW1vbiB7XHJcbiAgICB3aWR0aDogMTIwcHg7XHJcbiAgICBoZWlnaHQ6IDEyMHB4O1xyXG4gICAgcGFkZGluZzogMjBweCAxMHB4O1xyXG4gICAgYm9yZGVyOiBzb2xpZCAxcHggI2NjYztcclxuICAgIGNvbG9yOiByZ2JhKDAsIDAsIDAsIDAuODcpO1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XHJcbiAgICBjdXJzb3I6IG1vdmU7XHJcbiAgICBiYWNrZ3JvdW5kOiB3aGl0ZTtcclxuICAgIGZvbnQtc2l6ZTogMTRweDtcclxuICAgIG1hcmdpbjogNXB4O1xyXG59XHJcbiAgXHJcbi5jZGstZHJhZy1wcmV2aWV3IHtcclxuICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XHJcbiAgICBib3JkZXItcmFkaXVzOiA0cHg7XHJcbiAgICBib3gtc2hhZG93OiAwIDVweCA1cHggLTNweCByZ2JhKDAsIDAsIDAsIDAuMiksXHJcbiAgICAgICAgICAgICAgICAwIDhweCAxMHB4IDFweCByZ2JhKDAsIDAsIDAsIDAuMTQpLFxyXG4gICAgICAgICAgICAgICAgMCAzcHggMTRweCAycHggcmdiYSgwLCAwLCAwLCAwLjEyKTtcclxufVxyXG4gIFxyXG4uY2RrLWRyYWctcGxhY2Vob2xkZXIge1xyXG4gICAgb3BhY2l0eTogMDtcclxufVxyXG4gIFxyXG4uY2RrLWRyYWctYW5pbWF0aW5nIHtcclxuICAgIHRyYW5zaXRpb246IHRyYW5zZm9ybSAyNTBtcyBjdWJpYy1iZXppZXIoMCwgMCwgMC4yLCAxKTtcclxufVxyXG5cclxuLmludmVudG9yeS1saXN0LmNkay1kcm9wLWxpc3QtZHJhZ2dpbmcgLnBva2Vtb246bm90KC5jZGstZHJhZy1wbGFjZWhvbGRlcikge1xyXG4gICAgdHJhbnNpdGlvbjogdHJhbnNmb3JtIDI1MG1zIGN1YmljLWJlemllcigwLCAwLCAwLjIsIDEpO1xyXG59Il19 */"
+
+/***/ }),
+
+/***/ "./src/app/module/inventory/inventory.component.ts":
+/*!*********************************************************!*\
+  !*** ./src/app/module/inventory/inventory.component.ts ***!
+  \*********************************************************/
+/*! exports provided: InventoryComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InventoryComponent", function() { return InventoryComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_core_services__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/core/services */ "./src/app/core/services/index.ts");
+/* harmony import */ var _angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/cdk/drag-drop */ "./node_modules/@angular/cdk/esm5/drag-drop.es5.js");
+
+
+
+
+var InventoryComponent = /** @class */ (function () {
+    function InventoryComponent(inventoryService, pokemonService) {
+        this.inventoryService = inventoryService;
+        this.pokemonService = pokemonService;
+        this.team = { slot1: [], slot2: [], slot3: [], slot4: [], slot5: [], slot6: [] };
+        this.inventoryList = this.getInventoryList();
+        this.team = this.getTeam();
+    }
+    InventoryComponent.prototype.getInventoryList = function () {
+        return this.inventoryService.getInventoryList();
+    };
+    InventoryComponent.prototype.getTeam = function () {
+        return this.inventoryService.getTeam();
+    };
+    InventoryComponent.prototype.saveInventoryList = function (inventory) {
+        return this.inventoryService.saveInventoryList(inventory);
+    };
+    InventoryComponent.prototype.saveTeam = function (team) {
+        return this.inventoryService.saveTeam(team);
+    };
+    InventoryComponent.prototype.getPokemonSpriteUrl = function (id) {
+        return this.pokemonService.getPokemonSpriteUrl(id);
+    };
+    InventoryComponent.prototype.drop = function (event) {
+        console.log(event, this.team, this.inventoryList);
+        if (event.previousContainer != event.container) {
+            Object(_angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_3__["transferArrayItem"])(event.previousContainer.data, event.container.data, event.previousIndex, 1);
+            if (event.container.data.length == 2) {
+                Object(_angular_cdk_drag_drop__WEBPACK_IMPORTED_MODULE_3__["transferArrayItem"])(event.container.data, event.previousContainer.data, 0, event.previousIndex);
+            }
+            this.saveInventoryList(this.inventoryList);
+            this.saveTeam(this.team);
+        }
+    };
+    InventoryComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'inventory-component',
+            template: __webpack_require__(/*! ./inventory.component.html */ "./src/app/module/inventory/inventory.component.html"),
+            styles: [__webpack_require__(/*! ./inventory.component.scss */ "./src/app/module/inventory/inventory.component.scss")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_core_services__WEBPACK_IMPORTED_MODULE_2__["InventoryService"],
+            src_app_core_services__WEBPACK_IMPORTED_MODULE_2__["PokemonService"]])
+    ], InventoryComponent);
+    return InventoryComponent;
+}());
 
 
 
@@ -819,7 +977,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"pokemonDetails\" class=\"pokedex\">\r\n  <button mat-mini-fab (click)=\"close()\">\r\n    <mat-icon aria-hidden=\"false\" aria-label=\"close\">close</mat-icon>\r\n  </button>\r\n  <h1>{{pokemonDetails.name}}</h1>\r\n  <div class=\"stat-img-table\">\r\n    <section class=\"img-table\">\r\n      <table>\r\n        <thead>\r\n          <tr>\r\n            <th></th>\r\n            <th>Male</th>\r\n            <th>Female</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr>\r\n            <td>Normal</td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_default\" alt=\"male normal\"></td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_female\" *ngIf=\"pokemonDetails.pokemon.sprites.front_female\" alt=\"female normal\"></td>\r\n          </tr>\r\n          <tr>\r\n            <td>Shiny</td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_shiny\" *ngIf=\"pokemonDetails.pokemon.sprites.front_shiny\" alt=\"male shiny\"></td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_shiny_female\" *ngIf=\"pokemonDetails.pokemon.sprites.front_shiny_female\" alt=\"female shiny\"></td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </section>\r\n    <section class=\"stat-table\">\r\n      <table>\r\n        <thead>\r\n          <tr>\r\n            <th colspan=\"2\">Stats</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr *ngFor=\"let stat of pokemonDetails.pokemon.stats\">\r\n            <td>{{ stat.stat.name }}</td>\r\n            <td>{{ stat.base_stat }}</td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </section>\r\n  </div>\r\n  <section class=\"description\">\r\n    <h2>description</h2>\r\n    <p>{{ getDescription(pokemonDetails.species.flavor_text_entries) }}</p>\r\n  </section>\r\n</div>\r\n<loading-component *ngIf=\"!pokemonDetails\"></loading-component>"
+module.exports = "<div *ngIf=\"pokemonDetails\" class=\"pokedex\">\r\n  <button mat-mini-fab (click)=\"close()\" class=\"close-button\">\r\n    <mat-icon aria-hidden=\"false\" aria-label=\"close\">close</mat-icon>\r\n  </button>\r\n  <h1>{{pokemonDetails.name}}</h1>\r\n  <div class=\"stat-img-table\">\r\n    <section class=\"img-table\">\r\n      <table>\r\n        <thead>\r\n          <tr>\r\n            <th></th>\r\n            <th>Male</th>\r\n            <th>Female</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr>\r\n            <td>Normal</td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_default\" alt=\"male normal\"></td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_female\" *ngIf=\"pokemonDetails.pokemon.sprites.front_female\" alt=\"female normal\"></td>\r\n          </tr>\r\n          <tr>\r\n            <td>Shiny</td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_shiny\" *ngIf=\"pokemonDetails.pokemon.sprites.front_shiny\" alt=\"male shiny\"></td>\r\n            <td class=\"img-case\"><img [src]=\"pokemonDetails.pokemon.sprites.front_shiny_female\" *ngIf=\"pokemonDetails.pokemon.sprites.front_shiny_female\" alt=\"female shiny\"></td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </section>\r\n    <section class=\"stat-table\">\r\n      <table>\r\n        <thead>\r\n          <tr>\r\n            <th colspan=\"2\">Stats</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <tr *ngFor=\"let stat of pokemonDetails.pokemon.stats\">\r\n            <td>{{ stat.stat.name }}</td>\r\n            <td>{{ stat.base_stat }}</td>\r\n          </tr>\r\n        </tbody>\r\n      </table>\r\n    </section>\r\n  </div>\r\n  <section class=\"description\">\r\n    <h2>description</h2>\r\n    <p>{{ getDescription(pokemonDetails.species.flavor_text_entries) }}</p>\r\n  </section>\r\n</div>\r\n<loading-component *ngIf=\"!pokemonDetails\"></loading-component>"
 
 /***/ }),
 
@@ -830,7 +988,7 @@ module.exports = "<div *ngIf=\"pokemonDetails\" class=\"pokedex\">\r\n  <button 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".pokedex {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  max-width: 600px;\n  max-height: 95vh;\n  overflow: auto; }\n  .pokedex table {\n    border-collapse: collapse; }\n  .pokedex .stat-img-table {\n    display: flex;\n    align-items: center;\n    flex-wrap: wrap;\n    width: 100%;\n    justify-content: space-around; }\n  .pokedex .stat-img-table section {\n      margin: 20px; }\n  .pokedex .stat-table th, .pokedex .stat-table td {\n    padding: 8px 20px;\n    text-align: left;\n    border-bottom: 1px solid #ddd; }\n  .pokedex .stat-table tr:nth-child(even) {\n    background-color: #f2f2f2; }\n  .pokedex .stat-table th {\n    background-color: #b8b8b8;\n    color: white; }\n  .pokedex .img-table th, .pokedex .img-table td {\n    padding: 5px;\n    text-align: center;\n    border-bottom: 1px solid #ddd;\n    border-right: 1px solid #ddd; }\n  .pokedex .img-table .img-case {\n    width: 100px;\n    height: 100px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL3Bva2Vtb25MaXN0L3Bva2Vtb24tZGV0YWlscy9DOlxcVXNlcnNcXGNsYWZmb250XFxEb3dubG9hZHNcXFBlcnNvXFxwb2tlZGl4ZWVkL3NyY1xcYXBwXFxtb2R1bGVcXHBva2Vtb25MaXN0XFxwb2tlbW9uLWRldGFpbHNcXHBva2Vtb24tZGV0YWlscy5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsbUJBQW1CO0VBQ25CLGdCQUFnQjtFQUNoQixnQkFBZ0I7RUFDaEIsY0FBYyxFQUFBO0VBTmxCO0lBU1EseUJBQXlCLEVBQUE7RUFUakM7SUFhUSxhQUFhO0lBQ2IsbUJBQW1CO0lBQ25CLGVBQWU7SUFDZixXQUFXO0lBQ1gsNkJBQTZCLEVBQUE7RUFqQnJDO01Bb0JZLFlBQVksRUFBQTtFQXBCeEI7SUEyQlksaUJBQWlCO0lBQ2pCLGdCQUFnQjtJQUNoQiw2QkFBNkIsRUFBQTtFQTdCekM7SUFnQzRCLHlCQUF5QixFQUFBO0VBaENyRDtJQW1DWSx5QkFBeUI7SUFDekIsWUFBWSxFQUFBO0VBcEN4QjtJQTJDWSxZQUFZO0lBQ1osa0JBQWtCO0lBQ2xCLDZCQUE2QjtJQUM3Qiw0QkFBNEIsRUFBQTtFQTlDeEM7SUFrRFksWUFBWTtJQUNaLGFBQWEsRUFBQSIsImZpbGUiOiJzcmMvYXBwL21vZHVsZS9wb2tlbW9uTGlzdC9wb2tlbW9uLWRldGFpbHMvcG9rZW1vbi1kZXRhaWxzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnBva2VkZXgge1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAgbWF4LXdpZHRoOiA2MDBweDtcclxuICAgIG1heC1oZWlnaHQ6IDk1dmg7XHJcbiAgICBvdmVyZmxvdzogYXV0bztcclxuXHJcbiAgICB0YWJsZSB7XHJcbiAgICAgICAgYm9yZGVyLWNvbGxhcHNlOiBjb2xsYXBzZTtcclxuICAgIH1cclxuXHJcbiAgICAuc3RhdC1pbWctdGFibGUge1xyXG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgICAgICBmbGV4LXdyYXA6IHdyYXA7XHJcbiAgICAgICAgd2lkdGg6IDEwMCU7XHJcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBzcGFjZS1hcm91bmQ7XHJcblxyXG4gICAgICAgIHNlY3Rpb24ge1xyXG4gICAgICAgICAgICBtYXJnaW46IDIwcHg7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIC5zdGF0LXRhYmxlIHtcclxuXHJcbiAgICAgICAgdGgsIHRkIHtcclxuICAgICAgICAgICAgcGFkZGluZzogOHB4IDIwcHg7XHJcbiAgICAgICAgICAgIHRleHQtYWxpZ246IGxlZnQ7XHJcbiAgICAgICAgICAgIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCAjZGRkO1xyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgdHI6bnRoLWNoaWxkKGV2ZW4pIHtiYWNrZ3JvdW5kLWNvbG9yOiAjZjJmMmYyO31cclxuXHJcbiAgICAgICAgdGgge1xyXG4gICAgICAgICAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjYjhiOGI4O1xyXG4gICAgICAgICAgICBjb2xvcjogd2hpdGU7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIC5pbWctdGFibGUge1xyXG4gICAgICAgIFxyXG4gICAgICAgIHRoLCB0ZCB7XHJcbiAgICAgICAgICAgIHBhZGRpbmc6IDVweDtcclxuICAgICAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgICAgICAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2RkZDtcclxuICAgICAgICAgICAgYm9yZGVyLXJpZ2h0OiAxcHggc29saWQgI2RkZDtcclxuICAgICAgICB9XHJcbiAgICAgICAgXHJcbiAgICAgICAgLmltZy1jYXNlIHtcclxuICAgICAgICAgICAgd2lkdGg6IDEwMHB4O1xyXG4gICAgICAgICAgICBoZWlnaHQ6IDEwMHB4O1xyXG4gICAgICAgIH1cclxuICAgIH1cclxufSJdfQ== */"
+module.exports = ".pokedex {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  max-width: 700px;\n  max-height: 95vh;\n  overflow: auto; }\n  .pokedex table {\n    border-collapse: collapse; }\n  .pokedex .stat-img-table {\n    display: flex;\n    align-items: center;\n    flex-wrap: wrap;\n    width: 100%;\n    justify-content: space-around; }\n  .pokedex .stat-img-table section {\n      margin: 20px; }\n  .pokedex .stat-table th, .pokedex .stat-table td {\n    padding: 8px 20px;\n    text-align: left;\n    border-bottom: 1px solid #ddd; }\n  .pokedex .stat-table tr:nth-child(even) {\n    background-color: #f2f2f2; }\n  .pokedex .stat-table th {\n    background-color: #b8b8b8;\n    color: white; }\n  .pokedex .img-table th, .pokedex .img-table td {\n    padding: 5px;\n    text-align: center;\n    border-bottom: 1px solid #ddd;\n    border-right: 1px solid #ddd; }\n  .pokedex .img-table .img-case {\n    width: 100px;\n    height: 100px; }\n  .close-button {\n  margin-left: auto; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL3Bva2Vtb25MaXN0L3Bva2Vtb24tZGV0YWlscy9DOlxcVXNlcnNcXGNsYWZmb250XFxEb3dubG9hZHNcXFBlcnNvXFxwb2tlZGl4ZWVkL3NyY1xcYXBwXFxtb2R1bGVcXHBva2Vtb25MaXN0XFxwb2tlbW9uLWRldGFpbHNcXHBva2Vtb24tZGV0YWlscy5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsbUJBQW1CO0VBQ25CLGdCQUFnQjtFQUNoQixnQkFBZ0I7RUFDaEIsY0FBYyxFQUFBO0VBTmxCO0lBU1EseUJBQXlCLEVBQUE7RUFUakM7SUFhUSxhQUFhO0lBQ2IsbUJBQW1CO0lBQ25CLGVBQWU7SUFDZixXQUFXO0lBQ1gsNkJBQTZCLEVBQUE7RUFqQnJDO01Bb0JZLFlBQVksRUFBQTtFQXBCeEI7SUEyQlksaUJBQWlCO0lBQ2pCLGdCQUFnQjtJQUNoQiw2QkFBNkIsRUFBQTtFQTdCekM7SUFnQzRCLHlCQUF5QixFQUFBO0VBaENyRDtJQW1DWSx5QkFBeUI7SUFDekIsWUFBWSxFQUFBO0VBcEN4QjtJQTJDWSxZQUFZO0lBQ1osa0JBQWtCO0lBQ2xCLDZCQUE2QjtJQUM3Qiw0QkFBNEIsRUFBQTtFQTlDeEM7SUFrRFksWUFBWTtJQUNaLGFBQWEsRUFBQTtFQUt6QjtFQUNJLGlCQUFpQixFQUFBIiwiZmlsZSI6InNyYy9hcHAvbW9kdWxlL3Bva2Vtb25MaXN0L3Bva2Vtb24tZGV0YWlscy9wb2tlbW9uLWRldGFpbHMuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIucG9rZWRleCB7XHJcbiAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgICBtYXgtd2lkdGg6IDcwMHB4O1xyXG4gICAgbWF4LWhlaWdodDogOTV2aDtcclxuICAgIG92ZXJmbG93OiBhdXRvO1xyXG5cclxuICAgIHRhYmxlIHtcclxuICAgICAgICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO1xyXG4gICAgfVxyXG5cclxuICAgIC5zdGF0LWltZy10YWJsZSB7XHJcbiAgICAgICAgZGlzcGxheTogZmxleDtcclxuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAgICAgIGZsZXgtd3JhcDogd3JhcDtcclxuICAgICAgICB3aWR0aDogMTAwJTtcclxuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWFyb3VuZDtcclxuXHJcbiAgICAgICAgc2VjdGlvbiB7XHJcbiAgICAgICAgICAgIG1hcmdpbjogMjBweDtcclxuICAgICAgICB9XHJcbiAgICB9XHJcblxyXG4gICAgLnN0YXQtdGFibGUge1xyXG5cclxuICAgICAgICB0aCwgdGQge1xyXG4gICAgICAgICAgICBwYWRkaW5nOiA4cHggMjBweDtcclxuICAgICAgICAgICAgdGV4dC1hbGlnbjogbGVmdDtcclxuICAgICAgICAgICAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkICNkZGQ7XHJcbiAgICAgICAgfVxyXG5cclxuICAgICAgICB0cjpudGgtY2hpbGQoZXZlbikge2JhY2tncm91bmQtY29sb3I6ICNmMmYyZjI7fVxyXG5cclxuICAgICAgICB0aCB7XHJcbiAgICAgICAgICAgIGJhY2tncm91bmQtY29sb3I6ICNiOGI4Yjg7XHJcbiAgICAgICAgICAgIGNvbG9yOiB3aGl0ZTtcclxuICAgICAgICB9XHJcbiAgICB9XHJcblxyXG4gICAgLmltZy10YWJsZSB7XHJcbiAgICAgICAgXHJcbiAgICAgICAgdGgsIHRkIHtcclxuICAgICAgICAgICAgcGFkZGluZzogNXB4O1xyXG4gICAgICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICAgICAgICAgIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCAjZGRkO1xyXG4gICAgICAgICAgICBib3JkZXItcmlnaHQ6IDFweCBzb2xpZCAjZGRkO1xyXG4gICAgICAgIH1cclxuICAgICAgICBcclxuICAgICAgICAuaW1nLWNhc2Uge1xyXG4gICAgICAgICAgICB3aWR0aDogMTAwcHg7XHJcbiAgICAgICAgICAgIGhlaWdodDogMTAwcHg7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG59XHJcblxyXG4uY2xvc2UtYnV0dG9uIHtcclxuICAgIG1hcmdpbi1sZWZ0OiBhdXRvO1xyXG59Il19 */"
 
 /***/ }),
 
@@ -900,7 +1058,7 @@ var PokemonDetailsDialog = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<mat-sidenav-container>\r\n  <mat-sidenav #sidenav [fixedInViewport]=\"mobileQuery.matches\" [mode]=\"mobileQuery.matches ? 'over' : 'side'\" [(opened)]=\"sideNavOpened\">\r\n    <section id=\"filters-menu\">\r\n      \r\n      <button mat-mini-fab class=\"open-close-side-nav\" (click)=\"sideNavOpened=!sideNavOpened\" [ngClass]=\"{'close': sideNavOpened}\">\r\n        <mat-icon aria-hidden=\"false\" aria-label=\"close\">close</mat-icon>\r\n      </button>\r\n\r\n      <mat-button-toggle-group name=\"order-by\" aria-label=\"Order by\">\r\n        <mat-button-toggle (click)=\"sort('entry_number')\" value=\"id\">\r\n          Pokemon ID\r\n          <mat-icon *ngIf=\"key=='entry_number'&&!reverse\" aria-hidden=\"false\" aria-label=\"croissant\">expand_less</mat-icon>\r\n          <mat-icon *ngIf=\"key=='entry_number'&&reverse\" aria-hidden=\"false\" aria-label=\"decroissant\">expand_more</mat-icon>\r\n        </mat-button-toggle>\r\n        <mat-button-toggle (click)=\"sort('pokemon_species')\" value=\"name\">\r\n          <mat-icon *ngIf=\"key=='pokemon_species'&&!reverse\" aria-hidden=\"false\" aria-label=\"croissant\">expand_less</mat-icon>\r\n          <mat-icon *ngIf=\"key=='pokemon_species'&&reverse\" aria-hidden=\"false\" aria-label=\"decroissant\">expand_more</mat-icon>\r\n          Pokemon name\r\n        </mat-button-toggle>\r\n      </mat-button-toggle-group>\r\n\r\n      <mat-form-field>\r\n        <input [(ngModel)]=\"filter.pokemonName\" matInput placeholder=\"Pokemon name or id\">\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Type</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('type')\" [(ngModel)]=\"filter.type\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let type of selectList.types | orderBy : 'name' : true\" [value]=\"type.name\">\r\n            {{ type.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Ability</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('ability')\" [(ngModel)]=\"filter.ability\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let ability of selectList.abilities | orderBy : 'name' : true\" [value]=\"ability.name\">\r\n            {{ ability.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Color</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('color')\" [(ngModel)]=\"filter.color\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let color of selectList.colors | orderBy : 'name' : true\" [value]=\"color.name\">\r\n            {{ color.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Generation</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('generation')\" [(ngModel)]=\"filter.generation\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let generation of selectList.generations | orderBy : 'name' : true\" [value]=\"generation.name\">\r\n            {{ generation.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n    </section>\r\n  </mat-sidenav>\r\n\r\n  <mat-sidenav-content>\r\n    <button mat-mini-fab class=\"open-close-side-nav\" (click)=\"sideNavOpened=!sideNavOpened\" [ngClass]=\"{'close': sideNavOpened}\">\r\n      <mat-icon aria-hidden=\"false\" aria-label=\"more\">more_horiz</mat-icon>\r\n    </button>\r\n    \r\n    <section id=\"pokemon-list\">\r\n      <loading-component *ngIf=\"isLoading\" style=\"height: 100vh\"></loading-component>\r\n      <ul *ngIf=\"!isLoading\">\r\n        <li *ngFor=\"\r\n          let pokemon of pokemonList\r\n          | filters: {\r\n            pokemon_species: filter.pokemonName,\r\n            entry_number: filter.pokemonName}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.ability}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.type}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.generation}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.color}\r\n          | orderBy : key : reverse\r\n          | paginate: { itemsPerPage: mobileQuery.matches ? 10 : 50, currentPage: p }\">\r\n          <button mat-raised-button (click)=\"openPokemonDetailsDialog(pokemon.pokemon_species.name)\">\r\n            <span class=\"pokemon-id\">{{ pokemon.entry_number }}</span>\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon.entry_number)\" [alt]=\"pokemon.pokemon_species.name\" aria-hidden=\"true\">\r\n            <p>{{ pokemon.pokemon_species.name }}</p>\r\n          </button>\r\n        </li>\r\n      </ul>\r\n\r\n      <pagination-controls (pageChange)=\"p = $event\" autoHide=\"true\" responsive=\"true\"></pagination-controls>\r\n\r\n    </section>\r\n  </mat-sidenav-content>\r\n</mat-sidenav-container>"
+module.exports = "<mat-sidenav-container>\r\n  <mat-sidenav #sidenav [fixedInViewport]=\"mobileQuery.matches\" [mode]=\"mobileQuery.matches ? 'over' : 'side'\" [(opened)]=\"sideNavOpened\">\r\n    <section id=\"filters-menu\">\r\n      \r\n      <button mat-mini-fab class=\"open-close-side-nav\" (click)=\"sideNavOpened=!sideNavOpened\" [ngClass]=\"{'close': sideNavOpened}\">\r\n        <mat-icon aria-hidden=\"false\" aria-label=\"close\">close</mat-icon>\r\n      </button>\r\n\r\n      <mat-button-toggle-group name=\"order-by\" aria-label=\"Order by\">\r\n        <mat-button-toggle checked (click)=\"sort('entry_number')\" value=\"id\">\r\n          Pokemon ID\r\n          <mat-icon *ngIf=\"key=='entry_number'&&!reverse\" aria-hidden=\"false\" aria-label=\"croissant\">expand_less</mat-icon>\r\n          <mat-icon *ngIf=\"key=='entry_number'&&reverse\" aria-hidden=\"false\" aria-label=\"decroissant\">expand_more</mat-icon>\r\n        </mat-button-toggle>\r\n        <mat-button-toggle (click)=\"sort('pokemon_species')\" value=\"name\">\r\n          <mat-icon *ngIf=\"key=='pokemon_species'&&!reverse\" aria-hidden=\"false\" aria-label=\"croissant\">expand_less</mat-icon>\r\n          <mat-icon *ngIf=\"key=='pokemon_species'&&reverse\" aria-hidden=\"false\" aria-label=\"decroissant\">expand_more</mat-icon>\r\n          Pokemon name\r\n        </mat-button-toggle>\r\n      </mat-button-toggle-group>\r\n\r\n      <mat-form-field>\r\n        <input [(ngModel)]=\"filter.pokemonName\" matInput placeholder=\"Pokemon name or id\">\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Type</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('type')\" [(ngModel)]=\"filter.type\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let type of selectList.types | orderBy : 'name' : true\" [value]=\"type.name\">\r\n            {{ type.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Ability</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('ability')\" [(ngModel)]=\"filter.ability\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let ability of selectList.abilities | orderBy : 'name' : true\" [value]=\"ability.name\">\r\n            {{ ability.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Color</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('color')\" [(ngModel)]=\"filter.color\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let color of selectList.colors | orderBy : 'name' : true\" [value]=\"color.name\">\r\n            {{ color.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n      <mat-form-field>\r\n        <mat-label>Generation</mat-label>\r\n        <mat-select (selectionChange)=\"abilityChange('generation')\" [(ngModel)]=\"filter.generation\">\r\n          <mat-option value=\"\"></mat-option>\r\n          <mat-option *ngFor=\"let generation of selectList.generations | orderBy : 'name' : true\" [value]=\"generation.name\">\r\n            {{ generation.name }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </mat-form-field>\r\n\r\n    </section>\r\n  </mat-sidenav>\r\n\r\n  <mat-sidenav-content>\r\n    <button mat-mini-fab class=\"open-close-side-nav\" (click)=\"sideNavOpened=!sideNavOpened\" [ngClass]=\"{'close': sideNavOpened}\">\r\n      <mat-icon aria-hidden=\"false\" aria-label=\"more\">more_horiz</mat-icon>\r\n    </button>\r\n    \r\n    <section id=\"pokemon-list\">\r\n\r\n      <mat-button-toggle-group class=\"mode-button\" name=\"change mode\" aria-label=\"change mode\" [(ngModel)]=\"mode\">\r\n        <mat-button-toggle checked value=\"pokeball\">\r\n          <img src=\"assets/img/pokeball.png\" alt=\"mode : attrapper un pokemon\" aria-hidden=\"false\">\r\n        </mat-button-toggle>\r\n        <mat-button-toggle value=\"loupe\">\r\n          <img src=\"assets/img/loupe.png\" alt=\"mode : connaitre des details sur un pokemon\" aria-hidden=\"false\">\r\n        </mat-button-toggle>\r\n      </mat-button-toggle-group>\r\n\r\n      <loading-component *ngIf=\"isLoading\" style=\"height: 100vh\"></loading-component>\r\n\r\n      <ul *ngIf=\"!isLoading\">\r\n        <li *ngFor=\"\r\n          let pokemon of pokemonList\r\n          | filters: {\r\n            pokemon_species: filter.pokemonName,\r\n            entry_number: filter.pokemonName}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.ability}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.type}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.generation}\r\n          | filterArray: {\r\n            pokemon_species: filteredPokemonListForFilter.color}\r\n          | orderBy : key : reverse\r\n          | paginate: { itemsPerPage: mobileQuery.matches ? 10 : 50, currentPage: p }\">\r\n          <button mat-raised-button (click)=\"clickOnPokemon($event, pokemon.pokemon_species.name, pokemon.entry_number)\" [ngClass]=\"{'mode-pokeball': mode == 'pokeball','mode-loupe': mode == 'loupe'}\">\r\n            <span class=\"pokemon-id\">{{ pokemon.entry_number }}</span>\r\n            <img [src]=\"getPokemonSpriteUrl(pokemon.entry_number)\" [alt]=\"pokemon.pokemon_species.name\" aria-hidden=\"true\">\r\n            <p>{{ pokemon.pokemon_species.name }}</p>\r\n          </button>\r\n        </li>\r\n      </ul>\r\n\r\n      <pagination-controls class=\"pokemon-list-pagination\" (pageChange)=\"p = $event\" autoHide=\"true\" responsive=\"true\"></pagination-controls>\r\n\r\n    </section>\r\n  </mat-sidenav-content>\r\n</mat-sidenav-container>"
 
 /***/ }),
 
@@ -911,7 +1069,7 @@ module.exports = "<mat-sidenav-container>\r\n  <mat-sidenav #sidenav [fixedInVie
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "#filters-menu {\n  display: flex;\n  flex-direction: column;\n  padding: 20px; }\n\n#pokemon-list {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  min-height: 100vh; }\n\n#pokemon-list ul {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: space-around;\n    flex-grow: 1;\n    margin: 0;\n    padding: 20px; }\n\n#pokemon-list li {\n    margin: 5px;\n    padding: 0;\n    list-style: none; }\n\n#pokemon-list li button {\n      display: flex;\n      flex-direction: column;\n      justify-content: center;\n      align-items: center;\n      position: relative;\n      height: 120px;\n      width: 120px;\n      background: white; }\n\n#pokemon-list li p {\n      margin: 0;\n      line-height: 1; }\n\n#pokemon-list li .pokemon-id {\n      position: absolute;\n      top: 9px;\n      left: 9px;\n      line-height: 1; }\n\nmat-sidenav-content .open-close-side-nav {\n  height: 40px;\n  width: 35px;\n  border-radius: 0 20px 20px 0;\n  background: white;\n  position: fixed;\n  left: 0;\n  top: 10px;\n  z-index: 1;\n  color: black;\n  transition: 1s ease; }\n\nmat-sidenav-content .open-close-side-nav.close {\n    left: -40px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL3Bva2Vtb25MaXN0L0M6XFxVc2Vyc1xcY2xhZmZvbnRcXERvd25sb2Fkc1xcUGVyc29cXHBva2VkaXhlZWQvc3JjXFxhcHBcXG1vZHVsZVxccG9rZW1vbkxpc3RcXHBva2Vtb24tbGlzdC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsYUFBYSxFQUFBOztBQUdqQjtFQUNJLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsbUJBQW1CO0VBQ25CLGlCQUFpQixFQUFBOztBQUpyQjtJQU9RLGFBQWE7SUFDYixlQUFlO0lBQ2YsNkJBQTZCO0lBQzdCLFlBQVk7SUFDWixTQUFTO0lBQ1QsYUFBYSxFQUFBOztBQVpyQjtJQWdCUSxXQUFXO0lBQ1gsVUFBVTtJQUNWLGdCQUFnQixFQUFBOztBQWxCeEI7TUFxQlksYUFBYTtNQUNiLHNCQUFzQjtNQUN0Qix1QkFBdUI7TUFDdkIsbUJBQW1CO01BQ25CLGtCQUFrQjtNQUNsQixhQUFhO01BQ2IsWUFBWTtNQUNaLGlCQUFpQixFQUFBOztBQTVCN0I7TUFnQ1ksU0FBUztNQUNULGNBQWMsRUFBQTs7QUFqQzFCO01BcUNZLGtCQUFrQjtNQUNsQixRQUFRO01BQ1IsU0FBUztNQUNULGNBQWMsRUFBQTs7QUFJMUI7RUFFUSxZQUFZO0VBQ1osV0FBVztFQUNYLDRCQUE0QjtFQUM1QixpQkFBaUI7RUFDakIsZUFBZTtFQUNmLE9BQU87RUFDUCxTQUFTO0VBQ1QsVUFBVTtFQUNWLFlBQVk7RUFDWixtQkFBbUIsRUFBQTs7QUFYM0I7SUFjWSxXQUFXLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9tb2R1bGUvcG9rZW1vbkxpc3QvcG9rZW1vbi1saXN0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI2ZpbHRlcnMtbWVudSB7XHJcbiAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgZmxleC1kaXJlY3Rpb246IGNvbHVtbjtcclxuICAgIHBhZGRpbmc6IDIwcHg7XHJcbn1cclxuXHJcbiNwb2tlbW9uLWxpc3Qge1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAgbWluLWhlaWdodDogMTAwdmg7XHJcblxyXG4gICAgdWwge1xyXG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICAgICAgZmxleC13cmFwOiB3cmFwO1xyXG4gICAgICAgIGp1c3RpZnktY29udGVudDogc3BhY2UtYXJvdW5kO1xyXG4gICAgICAgIGZsZXgtZ3JvdzogMTtcclxuICAgICAgICBtYXJnaW46IDA7XHJcbiAgICAgICAgcGFkZGluZzogMjBweDtcclxuICAgIH1cclxuXHJcbiAgICBsaSB7XHJcbiAgICAgICAgbWFyZ2luOiA1cHg7XHJcbiAgICAgICAgcGFkZGluZzogMDtcclxuICAgICAgICBsaXN0LXN0eWxlOiBub25lO1xyXG5cclxuICAgICAgICBidXR0b24ge1xyXG4gICAgICAgICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICAgICAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xyXG4gICAgICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICAgICAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgICAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgICAgICAgICBoZWlnaHQ6IDEyMHB4O1xyXG4gICAgICAgICAgICB3aWR0aDogMTIwcHg7XHJcbiAgICAgICAgICAgIGJhY2tncm91bmQ6IHdoaXRlO1xyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgcCB7XHJcbiAgICAgICAgICAgIG1hcmdpbjogMDtcclxuICAgICAgICAgICAgbGluZS1oZWlnaHQ6IDE7XHJcbiAgICAgICAgfVxyXG5cclxuICAgICAgICAucG9rZW1vbi1pZCB7XHJcbiAgICAgICAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgICAgICAgICAgdG9wOiA5cHg7XHJcbiAgICAgICAgICAgIGxlZnQ6IDlweDtcclxuICAgICAgICAgICAgbGluZS1oZWlnaHQ6IDE7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG59XHJcbm1hdC1zaWRlbmF2LWNvbnRlbnQge1xyXG4gICAgLm9wZW4tY2xvc2Utc2lkZS1uYXYge1xyXG4gICAgICAgIGhlaWdodDogNDBweDtcclxuICAgICAgICB3aWR0aDogMzVweDtcclxuICAgICAgICBib3JkZXItcmFkaXVzOiAwIDIwcHggMjBweCAwO1xyXG4gICAgICAgIGJhY2tncm91bmQ6IHdoaXRlO1xyXG4gICAgICAgIHBvc2l0aW9uOiBmaXhlZDtcclxuICAgICAgICBsZWZ0OiAwO1xyXG4gICAgICAgIHRvcDogMTBweDtcclxuICAgICAgICB6LWluZGV4OiAxO1xyXG4gICAgICAgIGNvbG9yOiBibGFjaztcclxuICAgICAgICB0cmFuc2l0aW9uOiAxcyBlYXNlO1xyXG5cclxuICAgICAgICAmLmNsb3NlIHtcclxuICAgICAgICAgICAgbGVmdDogLTQwcHg7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG59Il19 */"
+module.exports = "#filters-menu {\n  display: flex;\n  flex-direction: column;\n  padding: 20px; }\n  #filters-menu mat-button-toggle-group,\n  #filters-menu mat-form-field {\n    margin-bottom: 20px; }\n  #pokemon-list {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  min-height: 100vh; }\n  #pokemon-list ul {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: space-around;\n    margin: 0;\n    padding: 20px; }\n  #pokemon-list li {\n    margin: 5px;\n    padding: 0;\n    list-style: none; }\n  #pokemon-list li button {\n      display: flex;\n      flex-direction: column;\n      justify-content: center;\n      align-items: center;\n      position: relative;\n      height: 120px;\n      width: 120px;\n      background: white; }\n  #pokemon-list li button:hover::before {\n        content: '';\n        position: absolute;\n        z-index: 3;\n        height: 120px;\n        width: 120px;\n        opacity: 0.3;\n        background-size: 80px 80px;\n        background-repeat: no-repeat;\n        background-position: center;\n        -webkit-animation: zoom 0.3s ease-in-out;\n                animation: zoom 0.3s ease-in-out; }\n  #pokemon-list li p {\n      margin: 0;\n      line-height: 1; }\n  #pokemon-list li .pokemon-id {\n      position: absolute;\n      top: 9px;\n      left: 9px;\n      line-height: 1; }\n  #pokemon-list pagination-controls {\n    margin-top: auto; }\n  .mode-pokeball::before {\n  background-image: url('pokeball.png'); }\n  .mode-loupe::before {\n  background-image: url('loupe.png'); }\n  @-webkit-keyframes zoom {\n  0% {\n    background-size: 200px 200px; }\n  100% {\n    background-size: 80px 80px; } }\n  @keyframes zoom {\n  0% {\n    background-size: 200px 200px; }\n  100% {\n    background-size: 80px 80px; } }\n  mat-sidenav-content .open-close-side-nav {\n  height: 40px;\n  width: 35px;\n  border-radius: 0 20px 20px 0;\n  background: white;\n  position: fixed;\n  left: 0;\n  top: 10px;\n  z-index: 1;\n  color: black;\n  transition: 1s ease; }\n  mat-sidenav-content .open-close-side-nav.close {\n    left: -40px; }\n  mat-sidenav-container .open-close-side-nav {\n  margin: 0 0 20px auto; }\n  .mode-button img {\n  width: 30px;\n  margin: 10px; }\n  .pokemon-list-pagination /deep/ .ngx-pagination .current {\n  background: #ff4081; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbW9kdWxlL3Bva2Vtb25MaXN0L0M6XFxVc2Vyc1xcY2xhZmZvbnRcXERvd25sb2Fkc1xcUGVyc29cXHBva2VkaXhlZWQvc3JjXFxhcHBcXG1vZHVsZVxccG9rZW1vbkxpc3RcXHBva2Vtb24tbGlzdC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGFBQWE7RUFDYixzQkFBc0I7RUFDdEIsYUFBYSxFQUFBO0VBSGpCOztJQU9RLG1CQUFtQixFQUFBO0VBSTNCO0VBQ0ksYUFBYTtFQUNiLHNCQUFzQjtFQUN0QixtQkFBbUI7RUFDbkIsaUJBQWlCLEVBQUE7RUFKckI7SUFPUSxhQUFhO0lBQ2IsZUFBZTtJQUNmLDZCQUE2QjtJQUM3QixTQUFTO0lBQ1QsYUFBYSxFQUFBO0VBWHJCO0lBZVEsV0FBVztJQUNYLFVBQVU7SUFDVixnQkFBZ0IsRUFBQTtFQWpCeEI7TUFvQlksYUFBYTtNQUNiLHNCQUFzQjtNQUN0Qix1QkFBdUI7TUFDdkIsbUJBQW1CO01BQ25CLGtCQUFrQjtNQUNsQixhQUFhO01BQ2IsWUFBWTtNQUNaLGlCQUFpQixFQUFBO0VBM0I3QjtRQThCZ0IsV0FBVztRQUNYLGtCQUFrQjtRQUNsQixVQUFVO1FBQ1YsYUFBYTtRQUNiLFlBQVk7UUFDWixZQUFZO1FBQ1osMEJBQTBCO1FBQzFCLDRCQUE0QjtRQUM1QiwyQkFBMkI7UUFDM0Isd0NBQWdDO2dCQUFoQyxnQ0FBZ0MsRUFBQTtFQXZDaEQ7TUE0Q1ksU0FBUztNQUNULGNBQWMsRUFBQTtFQTdDMUI7TUFpRFksa0JBQWtCO01BQ2xCLFFBQVE7TUFDUixTQUFTO01BQ1QsY0FBYyxFQUFBO0VBcEQxQjtJQXlEUSxnQkFBZ0IsRUFBQTtFQUl4QjtFQUNJLHFDQUF5RCxFQUFBO0VBRzdEO0VBQ0ksa0NBQXNELEVBQUE7RUFHMUQ7RUFDSTtJQUNJLDRCQUE0QixFQUFBO0VBRWhDO0lBQ0ksMEJBQTBCLEVBQUEsRUFBQTtFQUxsQztFQUNJO0lBQ0ksNEJBQTRCLEVBQUE7RUFFaEM7SUFDSSwwQkFBMEIsRUFBQSxFQUFBO0VBSWxDO0VBRVEsWUFBWTtFQUNaLFdBQVc7RUFDWCw0QkFBNEI7RUFDNUIsaUJBQWlCO0VBQ2pCLGVBQWU7RUFDZixPQUFPO0VBQ1AsU0FBUztFQUNULFVBQVU7RUFDVixZQUFZO0VBQ1osbUJBQW1CLEVBQUE7RUFYM0I7SUFjWSxXQUFXLEVBQUE7RUFLdkI7RUFDSSxxQkFBcUIsRUFBQTtFQUd6QjtFQUVRLFdBQVc7RUFDWCxZQUFZLEVBQUE7RUFJcEI7RUFDSSxtQkFBbUIsRUFBQSIsImZpbGUiOiJzcmMvYXBwL21vZHVsZS9wb2tlbW9uTGlzdC9wb2tlbW9uLWxpc3QuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIjZmlsdGVycy1tZW51IHtcclxuICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xyXG4gICAgcGFkZGluZzogMjBweDtcclxuXHJcbiAgICBtYXQtYnV0dG9uLXRvZ2dsZS1ncm91cCxcclxuICAgIG1hdC1mb3JtLWZpZWxkIHtcclxuICAgICAgICBtYXJnaW4tYm90dG9tOiAyMHB4O1xyXG4gICAgfVxyXG59XHJcblxyXG4jcG9rZW1vbi1saXN0IHtcclxuICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xyXG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgIG1pbi1oZWlnaHQ6IDEwMHZoO1xyXG5cclxuICAgIHVsIHtcclxuICAgICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICAgIGZsZXgtd3JhcDogd3JhcDtcclxuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWFyb3VuZDtcclxuICAgICAgICBtYXJnaW46IDA7XHJcbiAgICAgICAgcGFkZGluZzogMjBweDtcclxuICAgIH1cclxuXHJcbiAgICBsaSB7XHJcbiAgICAgICAgbWFyZ2luOiA1cHg7XHJcbiAgICAgICAgcGFkZGluZzogMDtcclxuICAgICAgICBsaXN0LXN0eWxlOiBub25lO1xyXG5cclxuICAgICAgICBidXR0b24ge1xyXG4gICAgICAgICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICAgICAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xyXG4gICAgICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICAgICAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgICAgICAgICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG4gICAgICAgICAgICBoZWlnaHQ6IDEyMHB4O1xyXG4gICAgICAgICAgICB3aWR0aDogMTIwcHg7XHJcbiAgICAgICAgICAgIGJhY2tncm91bmQ6IHdoaXRlO1xyXG5cclxuICAgICAgICAgICAgJjpob3Zlcjo6YmVmb3JlIHtcclxuICAgICAgICAgICAgICAgIGNvbnRlbnQ6ICcnO1xyXG4gICAgICAgICAgICAgICAgcG9zaXRpb246IGFic29sdXRlO1xyXG4gICAgICAgICAgICAgICAgei1pbmRleDogMztcclxuICAgICAgICAgICAgICAgIGhlaWdodDogMTIwcHg7XHJcbiAgICAgICAgICAgICAgICB3aWR0aDogMTIwcHg7XHJcbiAgICAgICAgICAgICAgICBvcGFjaXR5OiAwLjM7XHJcbiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kLXNpemU6IDgwcHggODBweDtcclxuICAgICAgICAgICAgICAgIGJhY2tncm91bmQtcmVwZWF0OiBuby1yZXBlYXQ7XHJcbiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiBjZW50ZXI7XHJcbiAgICAgICAgICAgICAgICBhbmltYXRpb246IHpvb20gMC4zcyBlYXNlLWluLW91dDtcclxuICAgICAgICAgICAgfVxyXG4gICAgICAgIH1cclxuXHJcbiAgICAgICAgcCB7XHJcbiAgICAgICAgICAgIG1hcmdpbjogMDtcclxuICAgICAgICAgICAgbGluZS1oZWlnaHQ6IDE7XHJcbiAgICAgICAgfVxyXG5cclxuICAgICAgICAucG9rZW1vbi1pZCB7XHJcbiAgICAgICAgICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgICAgICAgICAgdG9wOiA5cHg7XHJcbiAgICAgICAgICAgIGxlZnQ6IDlweDtcclxuICAgICAgICAgICAgbGluZS1oZWlnaHQ6IDE7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG5cclxuICAgIHBhZ2luYXRpb24tY29udHJvbHMge1xyXG4gICAgICAgIG1hcmdpbi10b3A6IGF1dG87XHJcbiAgICB9XHJcbn1cclxuXHJcbi5tb2RlLXBva2ViYWxsOjpiZWZvcmUge1xyXG4gICAgYmFja2dyb3VuZC1pbWFnZTogdXJsKCcuLi8uLi8uLi9hc3NldHMvaW1nL3Bva2ViYWxsLnBuZycpO1xyXG59XHJcblxyXG4ubW9kZS1sb3VwZTo6YmVmb3JlIHtcclxuICAgIGJhY2tncm91bmQtaW1hZ2U6IHVybCgnLi4vLi4vLi4vYXNzZXRzL2ltZy9sb3VwZS5wbmcnKTtcclxufVxyXG5cclxuQGtleWZyYW1lcyB6b29tIHtcclxuICAgIDAlIHtcclxuICAgICAgICBiYWNrZ3JvdW5kLXNpemU6IDIwMHB4IDIwMHB4O1xyXG4gICAgfVxyXG4gICAgMTAwJSB7XHJcbiAgICAgICAgYmFja2dyb3VuZC1zaXplOiA4MHB4IDgwcHg7XHJcbiAgICB9XHJcbn1cclxuXHJcbm1hdC1zaWRlbmF2LWNvbnRlbnQge1xyXG4gICAgLm9wZW4tY2xvc2Utc2lkZS1uYXYge1xyXG4gICAgICAgIGhlaWdodDogNDBweDtcclxuICAgICAgICB3aWR0aDogMzVweDtcclxuICAgICAgICBib3JkZXItcmFkaXVzOiAwIDIwcHggMjBweCAwO1xyXG4gICAgICAgIGJhY2tncm91bmQ6IHdoaXRlO1xyXG4gICAgICAgIHBvc2l0aW9uOiBmaXhlZDtcclxuICAgICAgICBsZWZ0OiAwO1xyXG4gICAgICAgIHRvcDogMTBweDtcclxuICAgICAgICB6LWluZGV4OiAxO1xyXG4gICAgICAgIGNvbG9yOiBibGFjaztcclxuICAgICAgICB0cmFuc2l0aW9uOiAxcyBlYXNlO1xyXG5cclxuICAgICAgICAmLmNsb3NlIHtcclxuICAgICAgICAgICAgbGVmdDogLTQwcHg7XHJcbiAgICAgICAgfVxyXG4gICAgfVxyXG59XHJcblxyXG5tYXQtc2lkZW5hdi1jb250YWluZXIgLm9wZW4tY2xvc2Utc2lkZS1uYXYge1xyXG4gICAgbWFyZ2luOiAwIDAgMjBweCBhdXRvO1xyXG59XHJcblxyXG4ubW9kZS1idXR0b24ge1xyXG4gICAgaW1nIHtcclxuICAgICAgICB3aWR0aDogMzBweDtcclxuICAgICAgICBtYXJnaW46IDEwcHg7XHJcbiAgICB9XHJcbn1cclxuXHJcbi5wb2tlbW9uLWxpc3QtcGFnaW5hdGlvbiAvZGVlcC8gLm5neC1wYWdpbmF0aW9uIC5jdXJyZW50IHtcclxuICAgIGJhY2tncm91bmQ6ICNmZjQwODE7XHJcbn0iXX0= */"
 
 /***/ }),
 
@@ -940,8 +1098,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var PokemonListComponent = /** @class */ (function () {
-    function PokemonListComponent(dialog, pokemonService, abilitiesService, generationsService, typesService, colorsService, changeDetectorRef, media) {
-        var _this = this;
+    function PokemonListComponent(dialog, pokemonService, abilitiesService, generationsService, typesService, colorsService, changeDetectorRef, media, inventoryService) {
         this.dialog = dialog;
         this.pokemonService = pokemonService;
         this.abilitiesService = abilitiesService;
@@ -950,11 +1107,15 @@ var PokemonListComponent = /** @class */ (function () {
         this.colorsService = colorsService;
         this.changeDetectorRef = changeDetectorRef;
         this.media = media;
+        this.inventoryService = inventoryService;
         this.isLoading = true;
         this.sideNavOpened = false;
         this.key = 'entry_number';
         this.reverse = true;
         this.p = 1;
+    }
+    PokemonListComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.selectList = {
             types: [],
             abilities: [],
@@ -974,12 +1135,13 @@ var PokemonListComponent = /** @class */ (function () {
             colors: [],
             generations: [],
         };
+        this.mode = 'pokeball';
         this.loadPokemonList();
         this.loadSelectList();
         this.mobileQuery = this.media.matchMedia('(max-width: 600px)');
         this._mobileQueryListener = function () { return _this.changeDetectorRef.detectChanges(); };
         this.mobileQuery.addListener(this._mobileQueryListener);
-    }
+    };
     PokemonListComponent.prototype.ngOnDestroy = function () {
         this.mobileQuery.removeListener(this._mobileQueryListener);
     };
@@ -999,6 +1161,26 @@ var PokemonListComponent = /** @class */ (function () {
             _this.selectList.types = typesResponse.results;
             _this.selectList.colors = colorsResponse.results;
         });
+    };
+    PokemonListComponent.prototype.openPokemonDetailsDialog = function (name) {
+        this.dialog.open(_pokemon_details_pokemon_details_component__WEBPACK_IMPORTED_MODULE_6__["PokemonDetailsDialog"], {
+            maxWidth: '100vw',
+            data: {
+                pokemon: name
+            }
+        });
+    };
+    PokemonListComponent.prototype.captureOnePokemon = function (id) {
+        this.inventoryService.savePokemon(id);
+    };
+    PokemonListComponent.prototype.clickOnPokemon = function (e, name, id) {
+        if (this.mode == 'pokeball') {
+            this.captureOnePokemon(id);
+            this.pokeballAnimation(e);
+        }
+        else {
+            this.openPokemonDetailsDialog(name);
+        }
     };
     PokemonListComponent.prototype.abilityChange = function (filter) {
         var _this = this;
@@ -1035,12 +1217,13 @@ var PokemonListComponent = /** @class */ (function () {
     PokemonListComponent.prototype.getPokemonSpriteUrl = function (id) {
         return this.pokemonService.getPokemonSpriteUrl(id);
     };
-    PokemonListComponent.prototype.openPokemonDetailsDialog = function (name) {
-        this.dialog.open(_pokemon_details_pokemon_details_component__WEBPACK_IMPORTED_MODULE_6__["PokemonDetailsDialog"], {
-            maxWidth: '100vw',
-            data: {
-                pokemon: name
-            }
+    PokemonListComponent.prototype.pokeballAnimation = function (e) {
+        var pokeball = document.createElement('div');
+        pokeball.className = 'pokeball-animation';
+        pokeball.style.top = e.clientY + 'px';
+        pokeball.style.left = e.clientX + 'px';
+        document.body.appendChild(pokeball).addEventListener("animationend", function () {
+            document.body.removeChild(pokeball);
         });
     };
     PokemonListComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
@@ -1056,7 +1239,8 @@ var PokemonListComponent = /** @class */ (function () {
             src_app_core_services__WEBPACK_IMPORTED_MODULE_3__["TypesService"],
             src_app_core_services__WEBPACK_IMPORTED_MODULE_3__["ColorsService"],
             _angular_core__WEBPACK_IMPORTED_MODULE_1__["ChangeDetectorRef"],
-            _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_2__["MediaMatcher"]])
+            _angular_cdk_layout__WEBPACK_IMPORTED_MODULE_2__["MediaMatcher"],
+            src_app_core_services__WEBPACK_IMPORTED_MODULE_3__["InventoryService"]])
     ], PokemonListComponent);
     return PokemonListComponent;
 }());
