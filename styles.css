@@ -1,0 +1,72 @@
+@import url(https://fonts.googleapis.com/css2?family=Bree+Serif&family=Raleway:ital,wght@0,200;0,400;0,600;0,800;1,200;1,400;1,600;1,800&display=swap);
+@font-face {
+  font-family: "Marta Regular";
+  font-style: normal;
+  font-weight: normal;
+  src: url('Marta_Regular.woff') format("woff"), url('Marta_Regular.otf') format("otf");
+}
+@font-face {
+  font-family: "Marta Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: url('Marta_Italic.woff') format("woff"), url('Marta_Italic.otf') format("otf");
+}
+@font-face {
+  font-family: "Marta Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: url('Marta_Bold.woff') format("woff"), url('Marta_Bold.otf') format("otf");
+}
+h1, h2, h3, h4, h5, h6, .font__bree-serif {
+  font-family: "Bree Serif", serif;
+}
+.font__marta {
+  font-family: "Marta Regular", "Bree Serif", serif;
+}
+* {
+  font-family: "Raleway", sans-serif;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+body app-root {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+body app-root > * {
+  width: 100%;
+}
+.global__container {
+  max-width: 1020px;
+  margin: 0 auto;
+}
+.global__title-underline {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+.global__title-underline::before {
+  position: absolute;
+  background: #F567A6;
+  content: "";
+  bottom: -0.2rem;
+  top: 50%;
+  left: -0.2rem;
+  right: -0.2rem;
+  z-index: -1;
+  opacity: 0.5;
+}
+.global__background-red {
+  background: #980450;
+  color: #F0E9D1;
+}
+.global__background-white {
+  background: #F0E9D1;
+}
+.global__color-red {
+  color: #980450;
+}
+
+/*# sourceMappingURL=styles.css.map*/
