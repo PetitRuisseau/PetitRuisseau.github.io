@@ -26,6 +26,9 @@ h1, h2, h3, h4, h5, h6, .font__bree-serif {
 * {
   font-family: "Raleway", sans-serif;
 }
+* {
+  box-sizing: border-box;
+}
 body {
   margin: 0;
   padding: 0;
@@ -41,6 +44,7 @@ body app-root > * {
 .global__container {
   max-width: 1020px;
   margin: 0 auto;
+  padding: 2rem;
 }
 .global__title-underline {
   display: inline-block;
@@ -60,10 +64,10 @@ body app-root > * {
 }
 .global__background-red {
   background: #980450;
-  color: #F0E9D1;
+  color: white;
 }
 .global__background-white {
-  background: #F0E9D1;
+  background: #fbf9f1;
 }
 .global__color-red {
   color: #980450;
