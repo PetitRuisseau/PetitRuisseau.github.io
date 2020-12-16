@@ -91,5 +91,12 @@ h2 {
   font-size: 2em;
   margin: 2rem 0 4rem 0;
 }
+.container-anchor {
+  position: relative;
+}
+.container-anchor .anchor {
+  position: absolute;
+  top: -100px;
+}
 
 /*# sourceMappingURL=styles.css.map*/
